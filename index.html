@@ -6,8 +6,8 @@
         L_NO_TOUCH = false;
         L_DISABLE_3D = false;
     </script>
-    <style>html, body {width: 100%;height: 100%;margin: 0;padding: 0;}</style>
-    <style>#map {position:absolute;top:0;bottom:0;right:0;left:0;}</style>
+    <style>html, body {width: 100%; height: 100%; margin: 0; padding: 0;}</style>
+    <style>#map {position: absolute; top: 0; bottom: 0; right: 0; left: 0;}</style>
     <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
@@ -22,10 +22,10 @@
     <style>
         #map_4b10a1b313a99206e7db66ba841efd72 {
             position: relative;
-            width: 100.0%;
-            height: 100.0%;
-            left: 0.0%;
-            top: 0.0%;
+            width: 100%;
+            height: 100%;
+            left: 0;
+            top: 0;
         }
         .leaflet-container { font-size: 1rem; }
     </style>
@@ -33,7 +33,7 @@
 <body>
     <div class="folium-map" id="map_4b10a1b313a99206e7db66ba841efd72"></div>
     <script>
-        var map_4b10a1b313a99206e7db66ba841efd72 = L.map("map_4b10a1b313a99206e7db66ba841efd72", {
+        var map = L.map('map_4b10a1b313a99206e7db66ba841efd72', {
             center: [33.8416, 132.7657],
             crs: L.CRS.EPSG3857,
             zoom: 10,
@@ -41,22 +41,20 @@
             preferCanvas: false,
         });
 
-        var tile_layer_e7c0b8c2274621b3dd9a390ca509cb77 = L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
-            attribution: "&copy; <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors",
+        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
             detectRetina: false,
             maxNativeZoom: 19,
             maxZoom: 19,
             minZoom: 0,
             noWrap: false,
             opacity: 1,
-            subdomains: "abc",
+            subdomains: 'abc',
             tms: false
-        });
-        tile_layer_e7c0b8c2274621b3dd9a390ca509cb77.addTo(map_4b10a1b313a99206e7db66ba841efd72);
+        }).addTo(map);
 
         var hospitals = [
             // 病院データをここに追加
-            // 例:
             { '施設名': '病院1', 'fX': 132.7657, 'fY': 33.8416, '胃': 'あり', '大腸': 'なし' },
             { '施設名': '病院2', 'fX': 132.7757, 'fY': 33.8516, '胃': 'なし', '大腸': 'あり' },
             { '施設名': '病院3', 'fX': 132.7857, 'fY': 33.8616, '胃': 'あり', '大腸': 'あり' },
@@ -94,8 +92,8 @@
             });
         }
 
-        // 病院データを先に地図に追加
-        addHospitalMarkers(map_4b10a1b313a99206e7db66ba841efd72, hospitals);
+        // 病院データを地図に追加
+        addHospitalMarkers(map, hospitals);
 
         function addCurrentLocation(map) {
             if (navigator.geolocation) {
@@ -146,7 +144,8 @@
             }
         }
 
-        addCurrentLocation(map_4b10a1b313a99206e7db66ba841efd72);
+        // 現在地を追加
+        addCurrentLocation(map);
     </script>
 </body>
 </html>
