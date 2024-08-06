@@ -56,7 +56,44 @@
 
         var hospitals = [
             // 病院データをここに追加
+            // 例:
+            { '施設名': '病院1', 'fX': 132.7657, 'fY': 33.8416, '胃': 'あり', '大腸': 'なし' },
+            // 他の病院データ
         ];
+
+        // 病院データを地図に追加する関数
+        function addHospitalMarkers(map, hospitals) {
+            hospitals.forEach(function(hospital) {
+                var screenings = [];
+                if (hospital['胃']) {
+                    screenings.push('胃がん');
+                }
+                if (hospital['大腸']) {
+                    screenings.push('大腸がん');
+                }
+                var screeningsText = screenings.join('、');
+                var color = 'gray';
+                if (screenings.includes('胃がん') && screenings.includes('大腸がん')) {
+                    color = 'red';
+                } else if (screenings.includes('胃がん')) {
+                    color = 'blue';
+                } else if (screenings.includes('大腸がん')) {
+                    color = 'green';
+                }
+                var marker = L.marker([hospital.fY, hospital.fX], {
+                    icon: L.AwesomeMarkers.icon({
+                        icon: 'info-sign',
+                        markerColor: color,
+                        prefix: 'glyphicon'
+                    })
+                }).addTo(map);
+                var popupContent = `<div style='width: 300px;'><b>${hospital['施設名']}</b><br>がん検診: ${screeningsText}</div>`;
+                marker.bindPopup(popupContent);
+            });
+        }
+
+        // 病院データを先に地図に追加
+        addHospitalMarkers(map_4b10a1b313a99206e7db66ba841efd72, hospitals);
 
         function addCurrentLocation(map) {
             if (navigator.geolocation) {
