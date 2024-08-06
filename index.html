@@ -61,8 +61,7 @@
             // 他の病院データ
         ];
 
-        // 病院データを地図に追加する関数
-        function addHospitalMarkers(map, hospitals) {
+        function addHospitalMarkers(map, hospitals, lat, lon) {
             hospitals.forEach(function(hospital) {
                 var screenings = [];
                 if (hospital['胃']) {
@@ -80,20 +79,33 @@
                 } else if (screenings.includes('大腸がん')) {
                     color = 'green';
                 }
-                var marker = L.marker([hospital.fY, hospital.fX], {
+                
+                var markerOptions = {
                     icon: L.AwesomeMarkers.icon({
                         icon: 'info-sign',
                         markerColor: color,
                         prefix: 'glyphicon'
                     })
-                }).addTo(map);
-                var popupContent = `<div style='width: 300px;'><b>${hospital['施設名']}</b><br>がん検診: ${screeningsText}</div>`;
+                };
+                
+                // 現在地からの距離を計算
+                var distance = Math.sqrt(Math.pow(hospital.fY - lat, 2) + Math.pow(hospital.fX - lon, 2));
+                var distanceKm = distance * 111.32; // 緯度1度の距離をkmに変換
+                
+                // 最寄りの病院または1km以内の病院を強調表示
+                if (distanceKm <= 1) {
+                    markerOptions.icon = L.AwesomeMarkers.icon({
+                        icon: 'star',
+                        markerColor: 'orange',
+                        prefix: 'fa'
+                    });
+                }
+                
+                var marker = L.marker([hospital.fY, hospital.fX], markerOptions).addTo(map);
+                var popupContent = `<div style='width: 300px;'><b>${hospital['施設名']}</b><br>がん検診: ${screeningsText}<br>距離: ${distanceKm.toFixed(2)} km</div>`;
                 marker.bindPopup(popupContent);
             });
         }
-
-        // 病院データを先に地図に追加
-        addHospitalMarkers(map_4b10a1b313a99206e7db66ba841efd72, hospitals);
 
         function addCurrentLocation(map) {
             if (navigator.geolocation) {
@@ -105,7 +117,10 @@
                         .openPopup();
                     map.setView([lat, lon], 13);
 
-                    // 現在地から最寄りの胃がん、大腸がんの病院を計算して表示
+                    // 病院データを地図に追加
+                    addHospitalMarkers(map, hospitals, lat, lon);
+
+                    // 現在地から最寄りの病院を計算して表示
                     var stomachHospitals = hospitals.filter(function(hospital) {
                         return hospital['胃'] !== null;
                     }).map(function(hospital) {
@@ -127,11 +142,11 @@
                     }).slice(0, 3);
 
                     var stomachHospitalList = stomachHospitals.map(function(hospital) {
-                        return '<li>' + hospital['施設名'] + ': ' + hospital.distance.toFixed(2) + ' km</li>';
+                        return '<li>' + hospital['施設名'] + ': ' + (hospital.distance * 111.32).toFixed(2) + ' km</li>';
                     }).join('');
 
                     var colonHospitalList = colonHospitals.map(function(hospital) {
-                        return '<li>' + hospital['施設名'] + ': ' + hospital.distance.toFixed(2) + ' km</li>';
+                        return '<li>' + hospital['施設名'] + ': ' + (hospital.distance * 111.32).toFixed(2) + ' km</li>';
                     }).join('');
 
                     var nearestHospitalsPopup = L.popup()
